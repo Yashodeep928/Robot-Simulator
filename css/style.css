@@ -1,0 +1,36 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+}
+
+canvas {
+  display: block;
+}
+
+.information {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 10;
+
+  padding: 16px;
+  border-radius: 12px;
+
+  color: #0f172a;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.information h1 {
+  margin: 0 0 5px;
+  font-size: 20px;
+}
+
+.information p {
+  margin: 0;
+  font-size: 14px;
+}
