@@ -3,8 +3,6 @@ import { createScene } from "./scene.js";
 
 const {scene,camera,renderer,controls} = createScene();
 
-
-
 const groundGeometry = new THREE.BoxGeometry(20,0.2,20)
 
 const groundMaterial = new THREE.MeshStandardMaterial({color:0x4f9b4f})

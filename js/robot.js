@@ -46,30 +46,16 @@ export function createRobot(scene, physicsWorld) {
 
 
 
-  const torsoBodyDescription =
-    RAPIER.RigidBodyDesc.dynamic()
-      .setTranslation(0, 5, 0);
+  const torsoBodyDescription = RAPIER.RigidBodyDesc.dynamic().setTranslation(0, 5, 0);
 
-  const torsoBody = physicsWorld.createRigidBody(
-    torsoBodyDescription
-  );
+  const torsoBody = physicsWorld.createRigidBody(torsoBodyDescription);
 
 
 
-  const torsoColliderDescription =
-    RAPIER.ColliderDesc.cuboid(
-      torsoWidth / 2,
-      torsoHeight / 2,
-      torsoDepth / 2
-    )
-      .setFriction(0.8)
-      .setRestitution(0.1);
+  const torsoColliderDescription = RAPIER.ColliderDesc.cuboid(torsoWidth / 2,torsoHeight / 2,torsoDepth / 2
+    ).setFriction(0.8).setRestitution(0.1);
 
-  const torsoCollider =
-    physicsWorld.createCollider(
-      torsoColliderDescription,
-      torsoBody
-    );
+  const torsoCollider = physicsWorld.createCollider(torsoColliderDescription,torsoBody);
 
   return {
     robotGroup,
