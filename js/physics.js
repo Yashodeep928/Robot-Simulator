@@ -29,8 +29,5 @@ export function createGroundPhysics(world){
   const groundColliderDescription = RAPIER.ColliderDesc.cuboid(10, 0.1, 10).setFriction(0.8)
   const groundCollider = world.createCollider(groundColliderDescription, groundBody)
 
-  return{
-    groundBody,
-    groundCollider
-  }
+  return{groundBody,groundCollider}
 }
