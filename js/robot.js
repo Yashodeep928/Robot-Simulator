@@ -14,6 +14,14 @@ export function createRobot(scene, physicsWorld) {
   const torsoHeight = 1.6;
   const torsoDepth = 0.8;
 
+  const legWidth =0.45;
+  const legHeight =1.5;
+  const legDepth =0.5; 
+
+  const torsoStartY = 5;
+  const legStartY = torsoStartY - torsoHeight / 2 - legHeight / 2;
+  const legOffsetX = 0.45;
+
 
   const torsoGeometry = new THREE.BoxGeometry(torsoWidth,torsoHeight,torsoDepth);
 
@@ -46,7 +54,7 @@ export function createRobot(scene, physicsWorld) {
 
 
 
-  const torsoBodyDescription = RAPIER.RigidBodyDesc.dynamic().setTranslation(0, 5, 0);
+  const torsoBodyDescription = RAPIER.RigidBodyDesc.dynamic().setTranslation(0, torsoStartY, 0);
 
   const torsoBody = physicsWorld.createRigidBody(torsoBodyDescription);
 
@@ -57,11 +65,84 @@ export function createRobot(scene, physicsWorld) {
 
   const torsoCollider = physicsWorld.createCollider(torsoColliderDescription,torsoBody);
 
+  const legGeometry = new THREE.BoxGeometry(legWidth, legHeight, legDepth);
+
+  const legMaterial =  new THREE.MeshStandardMaterial({color: 0x1e3a8a});
+
+  const leftLegMesh = new THREE.Mesh(legGeometry, legMaterial);
+
+  const rightLegMesh = new THREE.Mesh(legGeometry, legMaterial);
+
+  leftLegMesh.position.set(-legOffsetX, legStartY, 0);
+
+  rightLegMesh.position.set(legOffsetX, legStartY, 0);
+
+  leftLegMesh.castShadow = true;
+  rightLegMesh.castShadow = true;
+  
+  robotGroup.add(leftLegMesh);
+  robotGroup.add(rightLegMesh);
+
+  const leftLegBody = physicsWorld.createRigidBody(RAPIER.RigidBodyDesc.dynamic().setTranslation(-legOffsetX, legStartY, 0));
+
+  const rightLegBody = physicsWorld.createRigidBody(RAPIER.RigidBodyDesc.dynamic().setTranslation(legOffsetX, legStartY, 0));
+
+  const leftLegCollider = physicsWorld.createCollider(RAPIER.ColliderDesc.cuboid(legWidth / 2, legHeight / 2, legDepth / 2).setFriction(0.8).setRestitution(0.05), leftLegBody);
+
+  const rightLegCollider = physicsWorld.createCollider(RAPIER.ColliderDesc.cuboid(legWidth / 2, legHeight / 2, legDepth / 2).setFriction(0.8).setRestitution(0.05), rightLegBody);
+
+const physicsParts = [
+  {
+    mesh: torsoMesh,
+    body: torsoBody,
+  },
+  {
+    mesh: leftLegMesh,
+    body: leftLegBody,
+  },
+  {
+    mesh: rightLegMesh,
+    body: rightLegBody,
+  },
+];
+
+
+const hipAxis = { x: 1, y: 0, z: 0,};
+
+const leftHipDescription = RAPIER.JointData.revolute({x: -legOffsetX, y: -torsoHeight/2, z: 0},{x: 0, y: legHeight/2, z: 0},hipAxis)
+
+const leftHipJoint = physicsWorld.createImpulseJoint(leftHipDescription, torsoBody, leftLegBody,true);
+
+
+const rightHipDescription = RAPIER.JointData.revolute({x: legOffsetX, y: -torsoHeight/2, z: 0},{x: 0, y: legHeight/2, z: 0},hipAxis)
+
+const rightHipJoint = physicsWorld.createImpulseJoint(rightHipDescription, torsoBody, rightLegBody,true);
+
+const hipSwingLimit = Math.PI / 4;
+
+leftHipJoint.setLimits(-hipSwingLimit, hipSwingLimit);
+
+rightHipJoint.setLimits(-hipSwingLimit, hipSwingLimit);
+
+leftHipJoint.setContactsEnabled(false);
+rightHipJoint.setContactsEnabled(false);
+
+
+
   return {
     robotGroup,
     torsoMesh,
     headMesh,
     torsoBody,
     torsoCollider,
+    leftLegMesh,
+    rightLegMesh,
+    leftLegBody,
+    rightLegBody,
+    leftLegCollider,
+    rightLegCollider,
+    physicsParts,
+    leftHipJoint,
+    rightHipJoint 
   };
 }

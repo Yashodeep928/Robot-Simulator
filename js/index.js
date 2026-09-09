@@ -24,30 +24,48 @@ const physicsWorld = await createWorld()
 
 createGroundPhysics(physicsWorld)
 
-const {robotGroup,torsoBody} = createRobot(scene,physicsWorld)
+const {physicsParts} = createRobot(scene,physicsWorld)
+
+  
 
 
 function animate(){
 
-    requestAnimationFrame(animate)
+    const timeStep = physicsWorld.timestep;
 
-    physicsWorld.step()
+let previousTime = performance.now();
+let accumulatedTime = 0;
 
-     const position = torsoBody.translation();
-  const rotation = torsoBody.rotation();
+function animate(currentTime) {
+  requestAnimationFrame(animate);
 
-  robotGroup.position.set(position.x,position.y,position.z);
+  
+  const elapsedTime = Math.min((currentTime - previousTime) / 1000, 0.1);
 
-  robotGroup.quaternion.set(
-    rotation.x,
-    rotation.y,
-    rotation.z,
-    rotation.w
-  );
+  previousTime = currentTime;
+  accumulatedTime += elapsedTime;
 
-    controls.update()
+ 
+  while (accumulatedTime >= timeStep) {
+    physicsWorld.step();
+    accumulatedTime -= timeStep;
+  }
 
-    renderer.render(scene,camera)
+ 
+  physicsParts.forEach((part) => {
+    const position = part.body.translation();
+    const rotation = part.body.rotation();
+
+    part.mesh.position.set( position.x,position.y,position.z);
+
+    part.mesh.quaternion.set(rotation.x,rotation.y,rotation.z,rotation.w);
+  });
+
+  controls.update();
+  renderer.render(scene, camera);
+}
+
+requestAnimationFrame(animate);
 }
 animate()
 
