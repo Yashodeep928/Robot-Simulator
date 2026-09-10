@@ -53,7 +53,9 @@ function animate(currentTime) {
 
  
   physicsParts.forEach((part) => {
+
     const position = part.body.translation();
+    
     const rotation = part.body.rotation();
 
     part.mesh.position.set( position.x,position.y,position.z);

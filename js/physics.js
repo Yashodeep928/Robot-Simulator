@@ -4,11 +4,7 @@ export async function createWorld(){
     await RAPIER.init();
 
 
-    const gravity = {
-        x: 0,
-        y: -9.81,
-        z: 0
-    }
+    const gravity = {x: 0,y: -9.81,z: 0}
 
     const world = new RAPIER.World(gravity)
 
