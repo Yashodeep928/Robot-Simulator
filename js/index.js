@@ -24,9 +24,30 @@ const physicsWorld = await createWorld()
 
 createGroundPhysics(physicsWorld)
 
-const {physicsParts} = createRobot(scene,physicsWorld)
+const {physicsParts,setLeftHipAngle,setRightHipAngle} = createRobot(scene,physicsWorld)
 
-  
+  document.getElementById("left-minus").addEventListener("click", () => {
+    setLeftHipAngle(-30);
+  });
+
+document.getElementById("left-zero").addEventListener("click", () => {
+    setLeftHipAngle(0);
+  });
+
+document.getElementById("left-plus").addEventListener("click", () => {
+    setLeftHipAngle(30);
+  });
+
+document.getElementById("right-minus").addEventListener("click", () => {
+    setRightHipAngle(-30);
+  });
+
+document.getElementById("right-zero").addEventListener("click", () => {
+    setRightHipAngle(0);
+  });
+
+document.getElementById("right-plus").addEventListener("click", () => {setRightHipAngle(30);
+  });
 
 
 function animate(){

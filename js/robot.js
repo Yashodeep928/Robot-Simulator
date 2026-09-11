@@ -2,13 +2,10 @@ import * as THREE from "three";
 import RAPIER from "rapier";
 
 export function createRobot(scene, physicsWorld) {
- 
 
   const robotGroup = new THREE.Group();
 
   scene.add(robotGroup);
-
-
 
   const torsoWidth = 1.4;
   const torsoHeight = 1.6;
@@ -18,7 +15,7 @@ export function createRobot(scene, physicsWorld) {
   const legHeight =1.5;
   const legDepth =0.5; 
 
-  const torsoStartY = 5;
+  const torsoStartY = 2.9;
   const legStartY = torsoStartY - torsoHeight / 2 - legHeight / 2;
   const legOffsetX = 0.45;
 
@@ -54,14 +51,13 @@ export function createRobot(scene, physicsWorld) {
 
 
 
-  const torsoBodyDescription = RAPIER.RigidBodyDesc.dynamic().setTranslation(0, torsoStartY, 0);
+  const torsoBodyDescription = RAPIER.RigidBodyDesc.fixed().setTranslation(0, torsoStartY, 0);
 
   const torsoBody = physicsWorld.createRigidBody(torsoBodyDescription);
 
 
 
-  const torsoColliderDescription = RAPIER.ColliderDesc.cuboid(torsoWidth / 2,torsoHeight / 2,torsoDepth / 2
-    ).setFriction(0.8).setRestitution(0.1);
+  const torsoColliderDescription = RAPIER.ColliderDesc.cuboid(torsoWidth / 2,torsoHeight / 2,torsoDepth / 2 ).setFriction(0.8).setRestitution(0.1);
 
   const torsoCollider = physicsWorld.createCollider(torsoColliderDescription,torsoBody);
 
@@ -127,6 +123,43 @@ rightHipJoint.setLimits(-hipSwingLimit, hipSwingLimit);
 leftHipJoint.setContactsEnabled(false);
 rightHipJoint.setContactsEnabled(false);
 
+const motorStiffness = 100;
+const motorDamping = 10;
+
+
+leftHipJoint.configureMotorPosition(0,motorStiffness,motorDamping);
+
+rightHipJoint.configureMotorPosition(0,motorStiffness,motorDamping);
+
+
+function setLeftHipAngle(degrees) {
+  
+  const limitedDegrees = Math.max(-45,Math.min(45, degrees));
+
+  const radians = limitedDegrees * Math.PI / 180;
+
+  leftHipJoint.configureMotorPosition(radians, motorStiffness,motorDamping);
+
+  leftLegBody.wakeUp();
+}
+
+function setRightHipAngle(degrees) {
+  const limitedDegrees = Math.max(
+    -45,
+    Math.min(45, degrees)
+  );
+
+  const radians = limitedDegrees * Math.PI / 180;
+
+  rightHipJoint.configureMotorPosition(
+    radians,
+    motorStiffness,
+    motorDamping
+  );
+
+  rightLegBody.wakeUp();
+}
+
 
 
   return {
@@ -143,6 +176,8 @@ rightHipJoint.setContactsEnabled(false);
     rightLegCollider,
     physicsParts,
     leftHipJoint,
-    rightHipJoint 
+    rightHipJoint,
+    setLeftHipAngle,
+  setRightHipAngle, 
   };
 }

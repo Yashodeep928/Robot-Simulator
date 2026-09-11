@@ -34,3 +34,24 @@ canvas {
   margin: 0;
   font-size: 14px;
 }
+
+.motor-controls {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 10;
+  padding: 16px;
+  border-radius: 12px;
+  background: white;
+  color: #0f172a;
+}
+
+.motor-controls p {
+  margin: 8px 0;
+}
+
+.motor-controls button {
+  padding: 8px 12px;
+  margin-right: 4px;
+  cursor: pointer;
+}
