@@ -12,7 +12,9 @@ export function createRobot(scene, physicsWorld) {
   const torsoDepth = 0.8;
 
   const legWidth =0.45;
+
   const legHeight =1.5;
+  
   const legDepth =0.5; 
 
   const torsoStartY = 2.9;
