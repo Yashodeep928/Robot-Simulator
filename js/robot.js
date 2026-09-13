@@ -1,4 +1,5 @@
 import * as THREE from "three";
+
 import RAPIER from "rapier";
 
 export function createRobot(scene, physicsWorld) {
@@ -38,9 +39,7 @@ export function createRobot(scene, physicsWorld) {
 
   const headGeometry = new THREE.SphereGeometry(0.45,32,32);
 
-  const headMaterial = new THREE.MeshStandardMaterial({
-    color: 0xfbbf24,
-  });
+  const headMaterial = new THREE.MeshStandardMaterial({color: 0xfbbf24});
 
   const headMesh = new THREE.Mesh(headGeometry,headMaterial);
 
@@ -48,10 +47,7 @@ export function createRobot(scene, physicsWorld) {
 
   headMesh.castShadow = true;
 
-
   torsoMesh.add(headMesh);
-
-
 
   const torsoBodyDescription = RAPIER.RigidBodyDesc.fixed().setTranslation(0, torsoStartY, 0);
 
@@ -89,20 +85,7 @@ export function createRobot(scene, physicsWorld) {
 
   const rightLegCollider = physicsWorld.createCollider(RAPIER.ColliderDesc.cuboid(legWidth / 2, legHeight / 2, legDepth / 2).setFriction(0.8).setRestitution(0.05), rightLegBody);
 
-const physicsParts = [
-  {
-    mesh: torsoMesh,
-    body: torsoBody,
-  },
-  {
-    mesh: leftLegMesh,
-    body: leftLegBody,
-  },
-  {
-    mesh: rightLegMesh,
-    body: rightLegBody,
-  },
-];
+const physicsParts = [{mesh: torsoMesh,body: torsoBody},{mesh: leftLegMesh,body: leftLegBody},{ mesh: rightLegMesh,body: rightLegBody}];
 
 
 const hipAxis = { x: 1, y: 0, z: 0,};
