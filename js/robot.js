@@ -106,6 +106,7 @@ leftHipJoint.setLimits(-hipSwingLimit, hipSwingLimit);
 rightHipJoint.setLimits(-hipSwingLimit, hipSwingLimit);
 
 leftHipJoint.setContactsEnabled(false);
+
 rightHipJoint.setContactsEnabled(false);
 
 const motorStiffness = 100;
