@@ -110,6 +110,8 @@ leftHipJoint.setContactsEnabled(false);
 rightHipJoint.setContactsEnabled(false);
 
 const motorStiffness = 100;
+
+
 const motorDamping = 10;
 
 
