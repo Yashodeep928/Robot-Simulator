@@ -17,11 +17,20 @@ export function createRobot(scene, physicsWorld) {
   const legHeight =1.5;
   
   const legDepth =0.5; 
+ const footWidth = 0.55;
+const footHeight = 0.18;
+const footDepth = 0.75;
 
-  const torsoStartY = 2.9;
+  const footLocalY = -legHeight / 2 - footHeight / 2;
+
+  const footLocalZ =  (footDepth - legDepth) / 4;
+
+  const groundClearance = 0.03;
+
+  const torsoStartY =groundClearance + footHeight +legHeight + torsoHeight / 2;
+
   const legStartY = torsoStartY - torsoHeight / 2 - legHeight / 2;
   const legOffsetX = 0.45;
-
 
   const torsoGeometry = new THREE.BoxGeometry(torsoWidth,torsoHeight,torsoDepth);
 
@@ -49,7 +58,7 @@ export function createRobot(scene, physicsWorld) {
 
   torsoMesh.add(headMesh);
 
-  const torsoBodyDescription = RAPIER.RigidBodyDesc.fixed().setTranslation(0, torsoStartY, 0);
+  const torsoBodyDescription = RAPIER.RigidBodyDesc.dynamic().setTranslation(0, torsoStartY, 0);
 
   const torsoBody = physicsWorld.createRigidBody(torsoBodyDescription);
 
@@ -149,6 +158,52 @@ function setRightHipAngle(degrees) {
 }
 
 
+  
+
+
+const footGeometry = new THREE.BoxGeometry(footWidth, footHeight, footDepth);
+
+const footMaterial = new THREE.MeshStandardMaterial({ color: 0x1e3a8a });
+
+const leftFootMesh = new THREE.Mesh(footGeometry,footMaterial);
+
+const rightFootMesh = new THREE.Mesh(footGeometry,footMaterial);
+
+leftFootMesh.position.set( 0,footLocalY,footLocalZ);
+
+rightFootMesh.position.set( 0, footLocalY, footLocalZ);
+
+leftFootMesh.castShadow = true;
+leftFootMesh.receiveShadow = true;
+
+rightFootMesh.castShadow = true;
+rightFootMesh.receiveShadow = true;
+
+leftLegMesh.add(leftFootMesh);
+rightLegMesh.add(rightFootMesh);
+
+const leftFootColliderDescription = RAPIER.ColliderDesc.cuboid( footWidth / 2,footHeight / 2,footDepth / 2)
+    .setTranslation( 0, footLocalY, footLocalZ)
+    .setFriction(1.2)
+    .setRestitution(0);
+
+const leftFootCollider = physicsWorld.createCollider(leftFootColliderDescription,leftLegBody);
+
+const rightFootColliderDescription = RAPIER.ColliderDesc.cuboid(footWidth / 2,
+    footHeight / 2,
+    footDepth / 2
+  )
+    .setTranslation(
+      0,
+      footLocalY,
+      footLocalZ
+    )
+    .setFriction(1.2)
+    .setRestitution(0);
+
+const rightFootCollider =physicsWorld.createCollider(rightFootColliderDescription,rightLegBody);
+
+
 
   return {
     robotGroup,
@@ -167,5 +222,9 @@ function setRightHipAngle(degrees) {
     rightHipJoint,
     setLeftHipAngle,
   setRightHipAngle, 
+  leftFootMesh,
+rightFootMesh,
+leftFootCollider,
+rightFootCollider
   };
 }
