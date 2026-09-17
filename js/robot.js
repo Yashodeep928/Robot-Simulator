@@ -34,9 +34,7 @@ const footDepth = 0.75;
 
   const torsoGeometry = new THREE.BoxGeometry(torsoWidth,torsoHeight,torsoDepth);
 
-  const torsoMaterial = new THREE.MeshStandardMaterial({
-    color: 0x2563eb,
-  });
+  const torsoMaterial = new THREE.MeshStandardMaterial({color: 0x2563eb});
 
   const torsoMesh = new THREE.Mesh(torsoGeometry,torsoMaterial);
 
@@ -61,8 +59,6 @@ const footDepth = 0.75;
   const torsoBodyDescription = RAPIER.RigidBodyDesc.dynamic().setTranslation(0, torsoStartY, 0);
 
   const torsoBody = physicsWorld.createRigidBody(torsoBodyDescription);
-
-
 
   const torsoColliderDescription = RAPIER.ColliderDesc.cuboid(torsoWidth / 2,torsoHeight / 2,torsoDepth / 2 ).setFriction(0.8).setRestitution(0.1);
 
@@ -141,25 +137,15 @@ function setLeftHipAngle(degrees) {
 }
 
 function setRightHipAngle(degrees) {
-  const limitedDegrees = Math.max(
-    -45,
-    Math.min(45, degrees)
-  );
+
+  const limitedDegrees = Math.max(-45,Math.min(45, degrees));
 
   const radians = limitedDegrees * Math.PI / 180;
 
-  rightHipJoint.configureMotorPosition(
-    radians,
-    motorStiffness,
-    motorDamping
-  );
+  rightHipJoint.configureMotorPosition(radians,motorStiffness,motorDamping);
 
   rightLegBody.wakeUp();
 }
-
-
-  
-
 
 const footGeometry = new THREE.BoxGeometry(footWidth, footHeight, footDepth);
 
@@ -189,15 +175,8 @@ const leftFootColliderDescription = RAPIER.ColliderDesc.cuboid( footWidth / 2,fo
 
 const leftFootCollider = physicsWorld.createCollider(leftFootColliderDescription,leftLegBody);
 
-const rightFootColliderDescription = RAPIER.ColliderDesc.cuboid(footWidth / 2,
-    footHeight / 2,
-    footDepth / 2
-  )
-    .setTranslation(
-      0,
-      footLocalY,
-      footLocalZ
-    )
+const rightFootColliderDescription = RAPIER.ColliderDesc.cuboid(footWidth / 2,footHeight / 2,footDepth / 2)
+    .setTranslation(0,footLocalY,footLocalZ)
     .setFriction(1.2)
     .setRestitution(0);
 
