@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { createScene } from "./scene.js";
 import { createRobot } from "./robot.js";
 import { createWorld,createGroundPhysics } from "./physics.js";
+import {createVirtualIMU} from "./imu.js";
 
 const {scene,camera,renderer,controls} = createScene();
 
@@ -24,7 +25,7 @@ const physicsWorld = await createWorld()
 
 createGroundPhysics(physicsWorld)
 
-const {physicsParts,setLeftHipAngle,setRightHipAngle} = createRobot(scene,physicsWorld)
+const {torsoBody,physicsParts,setLeftHipAngle,setRightHipAngle} = createRobot(scene,physicsWorld)
 
   document.getElementById("left-minus").addEventListener("click", () => {
     setLeftHipAngle(-30);
@@ -46,8 +47,50 @@ document.getElementById("right-zero").addEventListener("click", () => {
     setRightHipAngle(0);
   });
 
-document.getElementById("right-plus").addEventListener("click", () => {setRightHipAngle(30);
-  });
+document.getElementById("right-plus").addEventListener("click", () => {setRightHipAngle(30)});
+const virtualIMU = createVirtualIMU(torsoBody);
+
+
+const forwardTiltElement =  document.getElementById("forward-tilt");
+
+const sidewaysTiltElement = document.getElementById("sideways-tilt");
+
+const turningAngleElement = document.getElementById("turning-angle");
+
+const balanceStatusElement = document.getElementById("balance-status");
+
+
+  function updateIMUDisplay() {
+  const imuData = virtualIMU.read();
+
+  forwardTiltElement.textContent = `${imuData.forwardTilt.toFixed(2)}°`;
+
+  sidewaysTiltElement.textContent =
+    `${imuData.sidewaysTilt.toFixed(2)}°`;
+
+  turningAngleElement.textContent =
+    `${imuData.turningAngle.toFixed(2)}°`;
+
+  const forwardDanger =
+    Math.abs(imuData.forwardTilt) > 15;
+
+  const sidewaysDanger =
+    Math.abs(imuData.sidewaysTilt) > 15;
+
+  if (forwardDanger || sidewaysDanger) {
+    balanceStatusElement.textContent =
+      "Falling";
+
+    balanceStatusElement.style.color =
+      "#dc2626";
+  } else {
+    balanceStatusElement.textContent =
+      "Straight";
+
+    balanceStatusElement.style.color =
+      "#15803d";
+  }
+}
 
 
 function animate(){
@@ -83,6 +126,8 @@ function animate(currentTime) {
 
     part.mesh.quaternion.set(rotation.x,rotation.y,rotation.z,rotation.w);
   });
+
+   updateIMUDisplay();
 
   controls.update();
   renderer.render(scene, camera);
