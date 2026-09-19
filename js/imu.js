@@ -1,9 +1,9 @@
-
 import * as THREE from "three";
 
 export function createVirtualIMU(torsoBody) {
 
   const quaternion = new THREE.Quaternion();
+  
   const euler = new THREE.Euler();
 
   function read() {
